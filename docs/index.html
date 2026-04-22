@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trust-Aware Context Selection: Learned Signal Combination for Multi-Hop Evidence Retrieval</title>
+  <meta name="description" content="A six-feature logistic regression fit on only 100 questions per seed beats SBERT by +3.3 Precision@2 points on HotpotQA distractor, and discovers that paragraph length and cross-paragraph consistency are learned as anti-signals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="topnav" aria-label="Primary">
+    <a href="#" class="brand">TrustScore</a>
+    <ul class="nav-links">
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#figures">Figures</a></li>
+      <li><a href="#cite">Cite</a></li>
+    </ul>
+    <ul class="nav-external">
+      <li><a href="paper.pdf" class="pill">Paper</a></li>
+      <li><a href="https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7" class="pill pill-dark">Code</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <header class="hero">
+      <p class="eyebrow">Retrieval-augmented generation &middot; Multi-hop QA &middot; Trust-aware selection</p>
+      <h1>Six trust signals, a learned combiner, and a sign-flip hiding in every distractor-rich retrieval pipeline.</h1>
+      <p class="lede">
+        Most retrieval-augmented systems score candidate passages with a single relevance number. A richer view of trust would combine relevance, authority, and cross-source consistency. We ask whether that textbook intuition is empirically correct on HotpotQA's distractor setting, where each question comes with ten candidate paragraphs (two gold, eight distractors). A six-feature logistic regression fit on only 100 training questions per seed beats SBERT by <strong>+3.3 Precision@2 points</strong>, and the fitted weights reveal that two of the three classical trust heuristics &mdash; paragraph length and cross-paragraph consistency &mdash; are learned as <em>anti</em>-signals.
+      </p>
+
+      <dl class="metadata-grid">
+        <div><dt>Author</dt><dd>Vikash Chandra Mishra</dd></div>
+        <div><dt>Primary metric</dt><dd>Precision@2</dd></div>
+        <div><dt>Result</dt><dd><strong>0.345 &plusmn; 0.032</strong></dd></div>
+        <div><dt>Seeds</dt><dd>3 (all positive)</dd></div>
+        <div><dt>Model</dt><dd>6-feature LogReg</dd></div>
+        <div><dt>Dataset</dt><dd><code>HotpotQA</code> distractor</dd></div>
+        <div><dt>Training questions</dt><dd>100 / seed</dd></div>
+        <div><dt>Test questions</dt><dd>200 / seed</dd></div>
+        <div><dt>License</dt><dd>MIT</dd></div>
+      </dl>
+    </header>
+
+    <!-- ABSTRACT -->
+    <section id="abstract" class="section section-narrow">
+      <h2 class="section-title"><span class="section-num">01</span> Abstract</h2>
+      <p>Retrieval-augmented language models increasingly depend on a pool of heterogeneous candidate passages, and the correctness of a grounded answer hinges on which passages enter the context window. Most systems collapse this selection to a single relevance score, yet a classical view of trust decomposes into several orthogonal dimensions; on HotpotQA's distractor setting we can directly measure three of them: relevance to the query, an intrinsic authority proxy, and corroboration across independent candidate passages. We compare a naive uniform average of three trust signals against a six-feature logistic regression fit on only 100 questions per seed. The learned combiner attains Precision@2 of <strong>0.345 &plusmn; 0.032</strong>, a 3.3 absolute-point improvement over the strongest single-signal baseline SBERT at 0.312 &plusmn; 0.035, with the gap consistent on every seed; the gold-versus-distractor score gap more than doubles, from 0.170 to 0.349. The uniform average instead collapses to 0.080, below BM25. Inspecting the fitted weights diagnoses why: paragraph length and cross-paragraph consistency are learned as anti-signals, because distractors are length-matched to gold and topically close enough that cross-source similarity peaks among distractors rather than among the gold pair. In distractor-rich retrieval, the classical trust heuristics are correct in prior but wrong in sign, and supervised calibration over only 100 questions per seed is sufficient to recover them.</p>
+    </section>
+
+    <!-- CONTRIBUTIONS -->
+    <section id="what-it-does" class="section">
+      <h2 class="section-title"><span class="section-num">02</span> What this paper contributes</h2>
+      <div class="card-grid card-grid-3">
+        <article class="feature-card">
+          <div class="card-num">01</div>
+          <h3>A 6-signal trust scorer, runnable on CPU</h3>
+          <p>We formalize paragraph-level trust-aware context selection as a per-candidate scoring problem over six orthogonal signals covering relevance, authority, and consistency, and release them as a drop-in feature bank.</p>
+        </article>
+        <article class="feature-card">
+          <div class="card-num">02</div>
+          <h3>+3.3 Precision@2 over SBERT with 100 training questions</h3>
+          <p>A logistic regression over 6 normalized features, trained on only 100 supervised questions per seed, beats the strongest single-signal baseline and more than doubles the gold-versus-distractor score gap. The gain has consistent sign on every seed.</p>
+        </article>
+        <article class="feature-card">
+          <div class="card-num">03</div>
+          <h3>A previously-undiagnosed sign-flip</h3>
+          <p>In HotpotQA's distractor pool, two of the three signals that textbook intuition would combine with positive weight &mdash; paragraph length and cross-paragraph consistency &mdash; are learned with <em>negative</em> weight. The naive uniform average collapses to 0.080, below BM25.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- METHOD -->
+    <section id="method" class="section">
+      <h2 class="section-title"><span class="section-num">03</span> How it works</h2>
+      <div class="card-grid card-grid-3">
+        <article class="feature-card">
+          <div class="card-num">01</div>
+          <h3>Six per-candidate signals, three dimensions</h3>
+          <p>Relevance: SBERT cosine, BM25, TF-IDF cosine. Authority: log-paragraph-length, question-entity overlap. Consistency: mean cross-paragraph SBERT cosine.</p>
+        </article>
+        <article class="feature-card">
+          <div class="card-num">02</div>
+          <h3>Logistic-regression combiner</h3>
+          <p>Each signal is min-max normalized within the candidate pool of its own question. A logistic regression over the six-dimensional feature vector produces a scalar trust score; the top-2 paragraphs are selected.</p>
+        </article>
+        <article class="feature-card">
+          <div class="card-num">03</div>
+          <h3>100 supervised questions per seed</h3>
+          <p>Each random seed gets a disjoint 100-question training split and a 200-question held-out test split. The classifier is refit from scratch per seed; no trust weight has ever seen a question on which its Precision@2 is reported.</p>
+        </article>
+      </div>
+      <figure class="wide-figure">
+        <img src="figures/fig-architecture.png" alt="End-to-end pipeline: query plus ten candidate paragraphs flow into a feature-extraction block with six rows grouped by trust dimension, then into a logistic-regression combiner, then to the top-2 selected paragraphs." loading="lazy">
+        <figcaption>Figure 1 &mdash; Trust-aware paragraph selection. Ten candidate paragraphs are scored by six per-paragraph signals spanning relevance (teal), authority proxies (coral), and cross-paragraph consistency (olive). A six-feature logistic regression combines the per-candidate feature vector into a scalar trust score; the top-2 paragraphs are selected.</figcaption>
+      </figure>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="section">
+      <h2 class="section-title"><span class="section-num">04</span> What we found</h2>
+
+      <div class="big-metric">
+        <span class="metric-value">0.345 &plusmn; 0.032</span>
+        <span class="metric-label">Precision@2 of Learned-TrustScore on HotpotQA distractor<br>(3 seeds, 200 held-out questions per seed)</span>
+      </div>
+
+      <p class="section-body">Across three seeds, Learned-TrustScore attains Precision@2 0.345 &plusmn; 0.032, a 3.3 absolute-point improvement over the strongest single-signal baseline SBERT at 0.312 &plusmn; 0.035. The sign of the gap is consistent across all three seeds (0.365 vs 0.310, 0.300 vs 0.270, 0.370 vs 0.355), evidence that the improvement is not a seed-lottery artifact. Paragraph F1 improves from 0.613 to 0.643 and supporting-fact F1 from 0.356 to 0.383. More tellingly, the gold-versus-distractor mean score gap more than doubles, from 0.170 to 0.349 &mdash; Learned-TrustScore is not just a better ranker but a better-calibrated confidence source.</p>
+
+      <figure class="wide-figure">
+        <img src="figures/fig-main-results.png" alt="Bar chart of Precision@2 for seven methods: Random (0.023), TrustScore-Uniform (0.080), Entity-overlap (0.152), BM25 (0.187), TF-IDF (0.198), SBERT (0.312), and TrustScore-Learned (0.345) highlighted in dark teal." loading="lazy">
+        <figcaption>Figure 2 &mdash; Precision@2 on HotpotQA distractor, means &plusmn; 1 population std over 3 seeds. TrustScore-Learned leads every baseline; TrustScore-Uniform (coral, ablation) collapses to 0.080, below BM25.</figcaption>
+      </figure>
+
+      <figure class="wide-figure">
+        <img src="figures/fig-weights.png" alt="Diverging horizontal bar chart of fitted logistic-regression weights. Positive weights: sbert_rel +3.09, bm25 +1.76, tfidf +0.64, entity_overlap +0.62. Negative weights: log_len -0.98 and consistency -0.88." loading="lazy">
+        <figcaption>Figure 3 &mdash; Fitted Learned-TrustScore weights, averaged across 3 seeds. Positive weights (teal) contribute toward gold; negative weights (coral) are learned as anti-signals. Paragraph length and cross-paragraph consistency flip negative because HotpotQA distractors are length-matched to gold and topically close enough that consistency peaks among distractors rather than gold.</figcaption>
+      </figure>
+
+      <figure class="wide-figure">
+        <img src="figures/fig-score-gap.png" alt="Horizontal bar chart of score gap (gold minus distractor) for three methods. TrustScore-Learned 0.349, SBERT 0.170, TrustScore-Uniform 0.072." loading="lazy">
+        <figcaption>Figure 4 &mdash; Gold-versus-distractor score gap. Learned-TrustScore separates gold from distractor by 0.349, more than double SBERT's 0.170; the uniform ablation lands at 0.072. A wider score gap translates to a more reliable confidence signal for downstream trust-aware selection.</figcaption>
+      </figure>
+    </section>
+
+    <!-- FIGURES / CONTEXT -->
+    <section id="figures" class="section">
+      <h2 class="section-title"><span class="section-num">05</span> Why the sign-flip happens</h2>
+      <p class="section-body">HotpotQA constructs each question's ten-candidate pool by sampling two gold Wikipedia paragraphs plus eight distractors drawn from topically adjacent entities. Two benchmark-construction choices drive the anti-signal finding: (a) distractors are length-matched to gold, so paragraph length carries no discriminative authority signal; (b) distractors are sampled to be topically close to the query, inflating their cross-paragraph similarity above that of the true gold pair. An uncritical application of textbook trust heuristics would import these two features with positive sign; supervised calibration over only 100 examples reverses them. We flag as open whether the sign-flip generalizes to other distractor-rich pipelines (FEVER, RGB, MuSiQue) or is specific to HotpotQA's construction.</p>
+      <figure class="wide-figure">
+        <img src="figures/fig-per-seed.png" alt="Per-seed Precision@2 paired-dot plot. SBERT grey dots at 0.310, 0.270, 0.355; TrustScore-Learned dark-teal dots at 0.365, 0.300, 0.370. Each pair connected by a dashed line annotated with the per-seed gap plus 0.055, plus 0.030, plus 0.015." loading="lazy">
+        <figcaption>Figure 5 &mdash; Per-seed Precision@2 for SBERT (grey) and Learned-TrustScore (dark teal). Learned-TrustScore exceeds SBERT on every seed; the mean 3.3-point gain is not a seed-lottery artifact.</figcaption>
+      </figure>
+    </section>
+
+    <!-- WHERE TO GO NEXT -->
+    <section id="go-next" class="section">
+      <h2 class="section-title"><span class="section-num">06</span> Where to go next</h2>
+      <div class="card-grid card-grid-4">
+        <a class="cta-card" href="paper.pdf">
+          <span class="cta-num">01</span>
+          <h3>Read the paper <span class="arrow">&rarr;</span></h3>
+          <p>Full 9-page PDF with method, protocol, results, discussion, and 26 references.</p>
+        </a>
+        <a class="cta-card" href="https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7">
+          <span class="cta-num">02</span>
+          <h3>See the code <span class="arrow">&rarr;</span></h3>
+          <p>Training script, per-seed metrics, all six figures, LaTeX source, and the sealed-PDF peer review.</p>
+        </a>
+        <a class="cta-card" href="https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7/blob/main/experiments/02-learned-trustscore/experiment.py">
+          <span class="cta-num">03</span>
+          <h3>Reproduce <span class="arrow">&rarr;</span></h3>
+          <p>CPU-runnable in under fifteen minutes on a single core. <code>SEEDS=0,1,2 python experiment.py</code> recovers every number in the paper.</p>
+        </a>
+        <a class="cta-card" href="#cite">
+          <span class="cta-num">04</span>
+          <h3>Cite <span class="arrow">&rarr;</span></h3>
+          <p>BibTeX entry for this paper, below.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- CITE -->
+    <section id="cite" class="section section-narrow">
+      <h2 class="section-title"><span class="section-num">07</span> Cite</h2>
+      <pre><code>@misc{mishra2026trustscore,
+  title  = {Trust-Aware Context Selection: Learned Signal Combination for Multi-Hop Evidence Retrieval},
+  author = {Vikash Chandra Mishra},
+  year   = {2026},
+  url    = {https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7}
+}</code></pre>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col footer-brand">
+        <p class="footer-title">TrustScore</p>
+        <p class="footer-text">A six-signal trust-aware paragraph-selection study on HotpotQA distractor, with a learned combiner that beats SBERT and a sign-flip diagnosis of two classical trust heuristics.</p>
+      </div>
+      <div class="footer-col">
+        <p class="footer-heading">Navigate</p>
+        <ul>
+          <li><a href="#abstract">Abstract</a></li>
+          <li><a href="#method">Method</a></li>
+          <li><a href="#results">Results</a></li>
+          <li><a href="#cite">Cite</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p class="footer-heading">External</p>
+        <ul>
+          <li><a href="paper.pdf">Paper (PDF)</a></li>
+          <li><a href="https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-meta">
+        <p>&copy; 2026 Vikash Chandra Mishra &middot; Released under the MIT License.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
