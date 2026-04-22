@@ -1,0 +1,40 @@
+Vertical bar chart. Y-axis label 'Precision@2', scaled 0.00 to 0.40. X-axis seven method names rotated 30 degrees. Bars left-to-right with the exact numeric value printed above each bar and error bars of half-height equal to the std. Horizontal dashed reference line drawn at y=0.312 labelled 'SBERT baseline'. Clean white background, sans-serif labels, no 3D, no decorative gradients.
+
+DATA (render the bars with these values exactly; do NOT add or remove bars; do NOT change numbers):
+- method=Random: p_at_2 = 0.023, std = 0.006, color=light grey
+- method=TrustScore-Uniform (ablation): p_at_2 = 0.080, std = 0.016, color=coral
+- method=Entity-overlap (ours): p_at_2 = 0.152, std = 0.005, color=medium grey
+- method=BM25: p_at_2 = 0.187, std = 0.020, color=medium grey
+- method=TF-IDF: p_at_2 = 0.198, std = 0.019, color=medium grey
+- method=SBERT: p_at_2 = 0.312, std = 0.035, color=medium grey
+- method=TrustScore-Learned (ours): p_at_2 = 0.345, std = 0.032, color=dark teal, thicker outline
+
+AXES:
+- x: method name, categorical, 7 ticks in the order above
+- y: 'Precision@2', range 0.00..0.40, ticks at 0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40
+
+LABELS (render verbatim):
+- Precision@2
+- Random
+- TrustScore-Uniform (ablation)
+- Entity-overlap (ours)
+- BM25
+- TF-IDF
+- SBERT
+- TrustScore-Learned (ours)
+- SBERT baseline
+- 0.023
+- 0.080
+- 0.152
+- 0.187
+- 0.198
+- 0.312
+- 0.345
+
+LEGEND (enumerate every color / line style / marker on the figure):
+- Dark teal bar: TrustScore-Learned (our proposed method)
+- Coral bar: TrustScore-Uniform (our ablation condition)
+- Medium grey bar: informed baselines (Entity-overlap, BM25, TF-IDF, SBERT)
+- Light grey bar: Random baseline
+- Horizontal dashed grey line: SBERT baseline reference at y=0.312
+- Vertical black whiskers centered on each bar: plus-minus one standard deviation across 3 seeds

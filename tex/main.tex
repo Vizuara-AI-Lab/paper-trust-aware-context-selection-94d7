@@ -1,0 +1,93 @@
+\documentclass[10pt,twocolumn]{article}
+
+% --- geometry + fonts ---
+\usepackage[a4paper,margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[section]{placeins}
+\usepackage[skip=6pt,font=small]{caption}
+\usepackage{flushend}
+\graphicspath{{../}{../figures/}}
+
+% --- layout discipline ---
+\setlength{\intextsep}{5pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
+\setlength{\floatsep}{6pt plus 1pt minus 1pt}
+\setlength{\dbltextfloatsep}{6pt plus 1pt minus 1pt}
+\setlength{\dblfloatsep}{6pt plus 1pt minus 1pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{2pt}
+\renewcommand{\arraystretch}{1.1}
+
+% --- boundary-overflow protections ---
+\emergencystretch=2em
+\tolerance=2000
+\hyphenpenalty=50
+\sloppy
+
+% --- math operators ---
+\DeclareMathOperator*{\argtop}{arg\,top}
+
+\title{Trust-Aware Context Selection: Learned Signal Combination\\for Multi-Hop Evidence Retrieval}
+\author{Vikash Chandra Mishra\\[2pt]Vizuara AI Labs\\[2pt]\texttt{vikash@vizuara.com}}
+\date{}
+
+\begin{document}
+\twocolumn[\begin{@twocolumnfalse}
+\maketitle
+\begin{abstract}
+Retrieval-augmented language models increasingly depend on a pool of
+heterogeneous candidate passages, and the correctness of a grounded
+answer hinges on which passages enter the context window. Most
+systems collapse this selection to a single relevance score, yet a
+classical view of trust decomposes into several orthogonal
+dimensions: relevance to the query, intrinsic authority of the
+source, and corroboration across independent sources. We ask
+whether combining six lightweight signals covering these three
+dimensions yields better selection than any single signal, and
+whether the textbook intuition for combining them is empirically
+correct. On HotpotQA's distractor setting, with exactly two gold
+paragraphs among ten candidates per question, we compare a naive
+uniform average of three trust signals against a six-feature
+logistic regression fit on only one hundred questions per seed. The
+learned combiner attains Precision@2 of $0.345 \pm 0.032$, a 3.3
+absolute-point improvement over the strongest single-signal baseline
+SBERT at $0.312 \pm 0.035$, with the gap consistent on every seed;
+the gold-versus-distractor score gap more than doubles, from $0.170$
+to $0.349$, indicating substantially better calibration. The uniform
+average instead collapses to $0.080$, below BM25. Inspecting the
+fitted weights diagnoses why: paragraph length and cross-paragraph
+consistency are learned as anti-signals, because distractors are
+length-matched to gold and topically close enough that cross-source
+similarity peaks among distractors rather than among the gold pair.
+In distractor-rich retrieval, the classical trust heuristics are
+correct in prior but wrong in sign, and supervised calibration over
+a handful of examples is sufficient to recover them.
+\end{abstract}
+\vspace{1em}
+\end{@twocolumnfalse}]
+
+\input{introduction}
+
+\input{related_work}
+
+\input{method}
+
+\input{experiments}
+
+\input{results}
+
+\input{conclusion}
+
+\FloatBarrier
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

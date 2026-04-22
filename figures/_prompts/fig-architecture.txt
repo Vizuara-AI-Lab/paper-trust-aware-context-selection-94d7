@@ -1,0 +1,35 @@
+Left-to-right block diagram. Leftmost: a single labelled box 'Query' above a stack of ten stacked labelled boxes 'p1..p10 (candidate paragraphs)'. Arrow to a middle 'Feature extraction' super-block showing six horizontal rows, each labelled with one signal and grouped under three side-labels: Relevance (SBERT, BM25, TF-IDF), Authority (log-length, entity-overlap), Consistency (cross-paragraph cosine). Arrow from this super-block into a rectangle labelled 'Logistic regression (learned weights)'. From that rectangle, an arrow into a final rectangle labelled 'Top-2 selected paragraphs'. Muted academic palette: ink on white with three accent colors: teal for Relevance group, coral for Authority group, olive for Consistency group. Labels sans-serif. No photorealism, no 3D, no decorative noise. Aspect ratio roughly 16:9.
+
+LABELS (render verbatim, do not paraphrase):
+- Query
+- p1
+- p2
+- p3
+- p4
+- p5
+- p6
+- p7
+- p8
+- p9
+- p10
+- Feature extraction
+- Relevance
+- SBERT cosine
+- BM25
+- TF-IDF cosine
+- Authority
+- log(paragraph length)
+- question-entity overlap
+- Consistency
+- cross-paragraph cosine
+- Logistic regression (learned weights)
+- Top-2 selected paragraphs
+
+LEGEND (enumerate every color / line style / symbol appearing in the figure):
+- Teal fill: Relevance-group signals (SBERT cosine, BM25, TF-IDF cosine)
+- Coral fill: Authority-group signals (log-length, question-entity overlap)
+- Olive fill: Consistency-group signal (cross-paragraph cosine)
+- Black outlined rectangle with no fill: Logistic regression combiner and final selection box
+- Black solid arrow: data flow between stages
+- Light-grey rectangle: candidate-paragraph boxes p1..p10
+- Dark-grey rectangle: Query box

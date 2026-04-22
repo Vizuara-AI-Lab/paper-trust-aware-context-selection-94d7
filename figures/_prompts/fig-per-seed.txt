@@ -1,0 +1,32 @@
+Paired-dot chart. X-axis three tick labels: 'Seed 0', 'Seed 1', 'Seed 2'. Y-axis label 'Precision@2', scaled 0.25 to 0.40. Two series each with three filled circular markers; within each seed, paired points are connected by a thin dashed vertical line annotated with the per-seed gap. Light horizontal grey gridlines every 0.025. Clean white background, sans-serif labels, aspect ratio 4:3.
+
+DATA (render the markers with these values exactly; do NOT add or remove markers; do NOT change numbers):
+- series=SBERT: (Seed 0, 0.310), (Seed 1, 0.270), (Seed 2, 0.355); marker=filled circle, color=medium grey
+- series=TrustScore-Learned (ours): (Seed 0, 0.365), (Seed 1, 0.300), (Seed 2, 0.370); marker=filled circle, color=dark teal
+- between-pair annotation labels (one per seed): '+0.055' at Seed 0, '+0.030' at Seed 1, '+0.015' at Seed 2; placed beside the thin dashed vertical line connecting the two dots at that seed.
+
+AXES:
+- x: categorical, 3 ticks labelled 'Seed 0', 'Seed 1', 'Seed 2'
+- y: 'Precision@2', range 0.25..0.40, ticks at 0.25, 0.275, 0.30, 0.325, 0.35, 0.375, 0.40
+
+LABELS (render verbatim):
+- Precision@2
+- Seed 0
+- Seed 1
+- Seed 2
+- 0.310
+- 0.270
+- 0.355
+- 0.365
+- 0.300
+- 0.370
+- +0.055
+- +0.030
+- +0.015
+
+LEGEND (enumerate every color / line style / marker on the figure):
+- Medium grey filled circle: SBERT (baseline) Precision@2
+- Dark teal filled circle: TrustScore-Learned (ours) Precision@2
+- Thin dashed vertical grey line: per-seed gap between the paired dots
+- '+0.055', '+0.030', '+0.015': per-seed gap annotation (TrustScore-Learned minus SBERT)
+- Light horizontal grey gridline: 0.025 tick on the Precision@2 axis

@@ -1,0 +1,86 @@
+\section{Related Work}
+\label{sec:related-work}
+
+\subsection{Multi-hop QA and supporting-fact selection}
+
+Multi-hop question answering evaluates the ability to combine evidence
+across multiple documents. HotpotQA~\cite{yang2018hotpotqa} pairs each
+question with ten Wikipedia paragraphs and sentence-level supporting-
+fact annotations, making paragraph-selection quality directly
+measurable. A line of work frames selection as a separate stage:
+cognitive graph retrievers~\cite{ding2019cognitivegraph} and iterative
+pathway retrievers~\cite{asai2020learning} traverse linked entities
+across paragraphs, while transformer-based sentence
+selectors~\cite{nie2019revealing} predict supporting sentences
+directly. These methods are accurate but comparatively heavy. Our
+TrustScore sits strictly upstream of any such selector: it is
+pointwise, scores paragraphs in isolation, and does not reason over
+the candidate graph.
+
+\subsection{Retrieval-augmented generation and context scoring}
+
+Retrieval-augmented generation~\cite{lewis2020rag,guu2020realm}
+retrieves a small context set at inference time to ground a generator.
+Dense Passage Retrieval~\cite{karpukhin2020dense} and downstream
+variants such as Fusion-in-Decoder~\cite{izacard2021fid} and
+REPLUG~\cite{shi2023replug} improved retrieval-side recall but
+continued to score passages by a single learned relevance function.
+Recent work has probed the failure modes of single-signal retrieval:
+LLMs are sensitive to the position of the relevant
+context~\cite{liu2024lostinthemiddle}, struggle with irrelevant
+distractors~\cite{yoran2024makingrag}, and degrade further under
+conflicting passages~\cite{xie2024adaptive}. Chen~et~al.\ introduced
+the RGB benchmark~\cite{chen2024rgb} specifically to stress-test RAG
+under noisy, counterfactual, and conflicting evidence. Our work
+complements this line: rather than train a retriever end-to-end, we
+ask whether a \emph{post-retrieval} trust-aware scorer, built from
+cheap signals and a small learned combiner, can separate gold from
+distractor candidates more reliably than a single relevance signal.
+
+\subsection{Source attribution and trust in LLM outputs}
+
+A parallel thread studies how language-model outputs should credit the
+evidence they stand on. GopherCite~\cite{menick2022gophercite} and
+Attributed QA~\cite{bohnet2022attributed} fine-tune generators to
+produce quotation-backed answers; Gao~et~al.~\cite{gao2023enabling}
+survey attribution in generative systems; Rashkin~et~al.~\cite{rashkin2023measuring}
+define measurable attribution criteria; and Asai~et~al.'s
+Self-RAG~\cite{asai2024selfrag} inserts explicit critique tokens that
+assess evidence quality at decode time. These methods operate during
+or after generation, and presume that a useful evidence pool has
+already been selected. Our setting is upstream: we ask which
+paragraphs deserve to enter the evidence pool in the first place, and
+which signals predict that.
+
+\subsection{Confidence, consistency, and hallucination filtering}
+
+Trust-aware selection is closely related to confidence estimation and
+hallucination detection. Self-consistency~\cite{wang2023selfconsistency}
+uses agreement across sampled reasoning chains as a correctness
+signal; selfcheckGPT~\cite{manakul2023selfcheckgpt} extends this to
+hallucination detection; Kadavath~et~al.~\cite{kadavath2022language}
+probe language models' internal calibration. These methods rely on
+consistency across model samples. Our consistency signal is structurally
+similar but operates across candidate \emph{passages} at retrieval
+time, and our learned combiner discovers that in a distractor-rich
+pool this signal is anti-correlated with gold, reversing the naive
+reading of consistency as corroboration.
+
+\subsection{Distinguishing contribution}
+
+Most closely related is the broader idea, articulated in recent
+position papers~\cite{wu2024retrieval,ram2023incontextrag}, that RAG
+pipelines should treat sources as heterogeneous entities with
+per-source trust rather than a homogeneous relevance pool. These
+discussions are largely conceptual. We operationalize the idea on a
+standard benchmark and show two concrete results. First, naive uniform
+trust-signal averaging is \emph{actively harmful} on HotpotQA
+distractor: not every trust heuristic is positively correlated with
+gold, and averaging them without calibration is worse than using
+relevance alone. Second, a six-feature logistic regression fit on 100
+questions per seed recovers the correct sign of each signal, beats
+SBERT by 3.3 absolute Precision@2 points, and more than doubles the
+gold-versus-distractor score gap. The ablation isolates
+a concrete instance of this phenomenon in HotpotQA distractor, and
+we are not aware of an existing empirical demonstration at this
+granularity.

@@ -1,0 +1,29 @@
+Horizontal bar chart. Y-axis lists three method labels top-to-bottom. X-axis label 'Score gap = mean(gold) minus mean(distractor)', scaled 0.0 to 0.4. Three bars with printed numeric labels at the tip and horizontal whiskers of half-length equal to std. Clean white background, sans-serif labels.
+
+DATA (render the bars with these values exactly; do NOT add or remove bars; do NOT change numbers):
+- method=TrustScore-Learned (ours): score_gap = 0.349, std = 0.016, color=dark teal
+- method=SBERT: score_gap = 0.170, std = 0.009, color=medium grey
+- method=TrustScore-Uniform (ablation): score_gap = 0.072, std = 0.007, color=coral
+
+AXES:
+- x: 'Score gap = mean(gold) minus mean(distractor)', range 0.0..0.4, ticks at 0.0, 0.1, 0.2, 0.3, 0.4
+- y: categorical, 3 ticks top-to-bottom: TrustScore-Learned (ours), SBERT, TrustScore-Uniform (ablation)
+
+EXTRA:
+- A faint vertical dashed grey reference line at x=0.170 annotated 'SBERT' at its top.
+
+LABELS (render verbatim):
+- Score gap = mean(gold) minus mean(distractor)
+- TrustScore-Learned (ours)
+- SBERT
+- TrustScore-Uniform (ablation)
+- 0.349
+- 0.170
+- 0.072
+
+LEGEND (enumerate every color / style on the figure):
+- Dark teal bar: TrustScore-Learned (our proposed method)
+- Medium grey bar: SBERT baseline
+- Coral bar: TrustScore-Uniform ablation
+- Horizontal black whisker on each bar: plus-minus one standard deviation across 3 seeds
+- Vertical dashed grey line at x=0.170: SBERT reference marker

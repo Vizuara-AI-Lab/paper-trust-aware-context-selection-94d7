@@ -1,0 +1,70 @@
+{
+  "seed": 2,
+  "primary_metric_name": "trust_learned_p_at_2",
+  "primary_metric": 0.37,
+  "training_time_s": 139.0522153377533,
+  "peak_gpu_memory_gb": 0.0,
+  "per_method": {
+    "random": {
+      "p_at_2": 0.03,
+      "paragraph_f1": 0.2,
+      "supporting_fact_f1": 0.10431948488471254,
+      "score_gap_gold_minus_distractor": -0.003054156171284461,
+      "n_examples": 200
+    },
+    "bm25": {
+      "p_at_2": 0.215,
+      "paragraph_f1": 0.495,
+      "supporting_fact_f1": 0.2672757112168876,
+      "score_gap_gold_minus_distractor": 1.7593383620729308,
+      "n_examples": 200
+    },
+    "tfidf": {
+      "p_at_2": 0.225,
+      "paragraph_f1": 0.5175,
+      "supporting_fact_f1": 0.2848089867648691,
+      "score_gap_gold_minus_distractor": 0.055519022292783576,
+      "n_examples": 200
+    },
+    "sbert": {
+      "p_at_2": 0.355,
+      "paragraph_f1": 0.655,
+      "supporting_fact_f1": 0.3810300116550117,
+      "score_gap_gold_minus_distractor": 0.18083954085424658,
+      "n_examples": 200
+    },
+    "entity_overlap": {
+      "p_at_2": 0.155,
+      "paragraph_f1": 0.4375,
+      "supporting_fact_f1": 0.23002638178814638,
+      "score_gap_gold_minus_distractor": 0.1655275503778335,
+      "n_examples": 200
+    },
+    "trust_uniform": {
+      "p_at_2": 0.08,
+      "paragraph_f1": 0.3875,
+      "supporting_fact_f1": 0.17555481449472313,
+      "score_gap_gold_minus_distractor": 0.07816187575583,
+      "n_examples": 200
+    },
+    "trust_learned": {
+      "p_at_2": 0.37,
+      "paragraph_f1": 0.655,
+      "supporting_fact_f1": 0.38292044840264666,
+      "score_gap_gold_minus_distractor": 0.33149375668345016,
+      "n_examples": 200
+    },
+    "_lr_weights": {
+      "sbert_rel": 2.7862264205315235,
+      "bm25": 1.5833186925187752,
+      "tfidf": 0.5976503855041455,
+      "log_len": -0.9881140459139844,
+      "consistency": -1.029818508713436,
+      "entity_overlap": 0.40076498427599855
+    },
+    "_lr_intercept": -2.86628329278045,
+    "_train_size": 100,
+    "_test_size": 200
+  },
+  "subset_size": 300
+}

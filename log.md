@@ -1,0 +1,36 @@
+# Session log — 20260422-100735-94d7
+
+- 2026-04-22T10:07:35Z | stage=init | skill=draft-paper | pass | Session initialized; author=Vikash Chandra Mishra; domain=Source Attribution & Trust-Aware Context Selection; scope=final_manuscript; venue=neurips; backend=runpod.
+- 2026-04-22T10:09:44Z | stage=0.1 | skill=ingest-references | pass | fetched 2/2 refs (2 local), 11 figure images extracted (3 attention + 8 geometry)
+- 2026-04-22T10:10:01Z | stage=0.2 | skill=ingest-student-links | skip | no student material provided (video/code/draft all empty)
+- 2026-04-22T10:10:55Z | stage=1 | skill=dataset-select | pass | selected HotpotQA (distractor setting); 2 alternatives (FEVER, RGB)
+- 2026-04-22T10:15:58Z | stage=2.1 | skill=experiment-plan | pass | iteration=1, directive + plan + script written (229 LOC)
+- 2026-04-22T10:39:50Z | stage=2.2 | skill=experiment-run | pass | backend=local-cpu iter=1 P@2 random=0.030 bm25=0.203 tfidf=0.206 sbert=0.312 trust=0.094
+- 2026-04-22T10:40:40Z | stage=2.3 | skill=experiment-judge | pass | iter=1 worthy=false score=6 — proposed method loses to best baseline; needs learned variant + entity-overlap authority
+- 2026-04-22T10:43:48Z | stage=2.1 | skill=experiment-plan | pass | iteration=2, revised (learned TrustScore + entity-overlap + score-gap diag; 328 LOC)
+- 2026-04-22T10:56:20Z | stage=2.2 | skill=experiment-run | pass | backend=local-cpu iter=2 P@2 sbert=0.312 trust_learned=0.345 trust_uniform=0.080 gap(trust_learned)=0.349
+- 2026-04-22T10:56:57Z | stage=2.3 | skill=experiment-judge | pass | iter=2 worthy=true score=8 — trust_learned +3.3 P@2 over SBERT, consistent per-seed; exit Stage 2 loop
+- 2026-04-22T10:58:01Z | stage=2.4 | skill=experiment-summarize | pass | primary=P@2(trust_learned)=0.345±0.0319 over 3 seeds; 5 baselines in run; 0 from literature
+- 2026-04-22T11:00:18Z | stage=3 | skill=draft-results | pass | 5 subsections (main, calibration, ablation, weights, scope) with 109 numeric citations
+- 2026-04-22T11:03:19Z | stage=4.1 | skill=plan-figures | pass | 6 planned (2 diagrams, 4 plots)
+- 2026-04-22T11:11:04Z | stage=5 | skill=write-section | pass | section=abstract (250 words)
+- 2026-04-22T11:11:04Z | stage=5 | skill=write-section | pass | section=introduction (642 words)
+- 2026-04-22T11:11:04Z | stage=5 | skill=write-section | pass | section=related_work (546 words)
+- 2026-04-22T11:11:04Z | stage=5 | skill=write-section | pass | section=method (656 words)
+- 2026-04-22T11:11:04Z | stage=5 | skill=write-section | pass | section=experiments (581 words)
+- 2026-04-22T11:11:04Z | stage=5 | skill=write-section | pass | section=conclusion (474 words)
+- 2026-04-22T11:26:38Z | stage=4.2 | skill=generate-figure | pass | 6/6 figures generated + autocropped; figure_metadata populated
+- 2026-04-22T11:27:45Z | stage=6.story | skill=check-story-loopholes | pass | iter=1 0H/2M/3L issues
+- 2026-04-22T11:28:50Z | stage=6.contradictions | skill=check-contradictions | pass | iter=1 0H/0M/3L
+- 2026-04-22T11:29:10Z | stage=6.criteria | skill=check-criteria | skip | iter=1 criteria_checklist empty, skipping
+- 2026-04-22T11:29:55Z | stage=6 | skill=quality-loop | pass | iter=2 0H/0M/1L — 2 medium issues from iter=1 resolved; exit quality loop
+- 2026-04-22T11:34:04Z | stage=7.1 | skill=add-references | pass | 26/26 verified (25 openalex + 1 manual_arxiv for Self-RAG), 0 dropped
+- 2026-04-22T11:34:25Z | stage=7.1b | skill=validate-references | pass | verified 26/26 (openalex=25, manual_arxiv=1), 0 dropped, 0 orphan cites
+- 2026-04-22T11:35:33Z | stage=7.2 | skill=spell-concept-check | pass | 6 files normalised to US English; 0 em dashes; 0 org-attribution leaks
+- 2026-04-22T11:38:41Z | stage=8.1 | skill=latex-assemble | pass | main.tex + 7 section inputs + references.bib + 26 refs
+- 2026-04-22T11:40:09Z | stage=8 | skill=latex-validate | pass | iter=1 clean, 19 non-fatal warnings (mostly Underfull hbox in two-column text)
+- 2026-04-22T11:40:09Z | stage=8 | skill=latex-compile | pass | iter=1 clean, 19 non-fatal warnings (mostly Underfull hbox in two-column text)
+- 2026-04-22T11:45:26Z | stage=9 | skill=auto-review | pass | iter=1 persona=domain-expert depth=deep score=7/10 rec=weak_accept 5S/6W 4 gating issues; exit_recommended=false
+- 2026-04-22T11:47:30Z | stage=9 | skill=auto-review | pass | iter=2 score=8/10 rec=accept 5S/2L no medium issues; exit_recommended=true
+- 2026-04-22T11:48:29Z | stage=10.1 | skill=recommend-venues | pass | 3 conferences + 2 journals: NeurIPS, EMNLP, ACL Findings, TMLR, ACM TOIS
+- 2026-04-22T11:48:49Z | stage=10.2 | skill=venue-format | skip | target=neurips; generic twocolumn retained; swap note added to state.delivery.venue_format_note

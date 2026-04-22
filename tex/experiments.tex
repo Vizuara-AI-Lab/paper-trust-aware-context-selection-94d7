@@ -1,0 +1,96 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Dataset}
+
+We evaluate on HotpotQA~\cite{yang2018hotpotqa} in the distractor
+configuration, using the 7{,}405-question validation split. Each
+example comprises a natural-language question, an answer, an answer
+type (``bridge'' or ``comparison''), and ten candidate paragraphs drawn
+from Wikipedia. Exactly two of the ten candidates are \emph{gold}
+supporting paragraphs; the remaining eight are \emph{distractors}
+selected to be topically close to the question. Sentence-level
+\texttt{supporting\_facts} annotations pinpoint the specific gold
+sentences within the two gold paragraphs. We load the dataset through
+the HuggingFace \texttt{hotpotqa/hotpot\_qa} loader and discard the
+rare examples whose gold-paragraph count differs from two.
+
+\subsection{Protocol}
+
+We run three seeds, $\text{seed}\in\{0,1,2\}$. For each seed, we
+shuffle the validation split with that seed's RNG and take the first
+300 questions as the working subset. We then split this subset
+100/200 into a training fold (used exclusively to fit
+TrustScore-Learned) and a held-out test fold (used to report every
+number in the Results section). No trust weight has ever seen a
+question on which its Precision@2 is reported; BM25, TF-IDF, SBERT,
+Entity-overlap, and TrustScore-Uniform are pointwise deterministic and
+involve no training step at all.
+
+The supervised variant fits a scikit-learn logistic regression~\cite{pedregosa2011sklearn}
+with $L_2$ regularization over a six-dimensional min-max-normalized
+feature vector. Normalization is performed within the candidate pool
+of each question, so that per-question score distributions are
+comparable.
+
+\subsection{Models and libraries}
+
+SBERT embeddings are produced by
+\texttt{sentence-transformers/all-MiniLM-L6-v2}, a compact
+sentence-transformer model~\cite{reimers2019sbert}; the model is run
+on CPU with normalized output embeddings. BM25 uses the Okapi
+variant~\cite{robertson2009bm25} implemented in \texttt{rank\_bm25}.
+TF-IDF uses scikit-learn's \texttt{TfidfVectorizer} with default
+settings, fit per question on $\{q\}\cup\mathcal{P}$. In the body text
+we refer to the sentence-transformer as \emph{all-MiniLM-L6-v2}; the
+full org-prefixed identifier above is the canonical HuggingFace hub
+path.
+
+End-to-end wall-clock for three seeds is under fifteen minutes on a
+single CPU core, comfortably within a laptop budget.
+
+\subsection{Baselines and conditions}
+
+We compare seven conditions, all scored over the same 200-question
+held-out fold per seed:
+
+\begin{itemize}
+  \item \textbf{Random}: permute the ten candidates with the seed's
+  RNG, take the first two. Establishes the floor.
+  \item \textbf{BM25}~\cite{robertson2009bm25}: rank by
+  $\operatorname{BM25}(q, p_i)$ on a lowercased bag of tokens.
+  \item \textbf{TF-IDF cosine}: cosine between TF-IDF vectors of $q$
+  and $p_i$, with the vocabulary fit jointly over
+  $\{q\}\cup\mathcal{P}$.
+  \item \textbf{SBERT}~\cite{reimers2019sbert}: cosine between
+  normalized all-MiniLM-L6-v2 embeddings. This is the strongest
+  single-signal baseline in our setting.
+  \item \textbf{Entity-overlap (ours)}: a standalone diagnostic that
+  scores $p_i$ purely by the fraction of question-entity tokens
+  present, providing a single-signal reference for the authority
+  dimension.
+  \item \textbf{TrustScore-Uniform (ablation)}: the uncalibrated
+  combination of relevance, length, and consistency defined in the
+  Method section.
+  \item \textbf{TrustScore-Learned (ours)}: the supervised six-feature
+  logistic regression. The proposed method.
+\end{itemize}
+
+\subsection{Evaluation metrics}
+
+Given a top-two selection $\hat{\mathcal{S}}$ and the gold set
+$\mathcal{S}^{*}=\{i : y_i=1\}$, we report four metrics.
+\textbf{Precision@2} is the indicator $\mathbf{1}[\hat{\mathcal{S}}=\mathcal{S}^{*}]$,
+averaged over the test fold; it is the strict top-pair metric and our
+primary reporting quantity. \textbf{Paragraph F1} is the F1 of
+$\hat{\mathcal{S}}$ against $\mathcal{S}^{*}$, more forgiving of
+one-correct-one-wrong selections. \textbf{Supporting-fact F1} is the
+sentence-level F1 in which the predicted sentence set is the union of
+all sentences of the two selected paragraphs; this upper-bounds a
+natural downstream pipeline that forwards whole selected paragraphs to
+a reader. \textbf{Score gap} is the difference between the mean score
+assigned to gold paragraphs and the mean score assigned to
+distractors, averaged over the test fold; unlike the ranking metrics,
+it is a calibration diagnostic, and a method can rank well (high P@2)
+yet remain poorly separated (small gap), which matters when a
+downstream module must threshold on the confidence.

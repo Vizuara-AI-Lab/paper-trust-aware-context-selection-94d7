@@ -1,0 +1,22 @@
+Three-column taxonomy diagram. Column headers in colored pills at the top of each column: 'Relevance' (teal pill), 'Authority' (coral pill), 'Consistency' (olive pill). Under Relevance: three stacked boxes labelled 'SBERT cosine', 'BM25', 'TF-IDF cosine'. Under Authority: two stacked boxes labelled 'log(paragraph length)', 'question-entity overlap'. Under Consistency: one box labelled 'mean cross-paragraph SBERT cosine'. Below each column an italic tagline in small text: Relevance: 'does it answer the query?'; Authority: 'is the source intrinsically credible?'; Consistency: 'does it agree with its peers?'. Clean white background, sans-serif labels. Aspect ratio roughly 4:3.
+
+LABELS (render verbatim, do not paraphrase):
+- Relevance
+- Authority
+- Consistency
+- SBERT cosine
+- BM25
+- TF-IDF cosine
+- log(paragraph length)
+- question-entity overlap
+- mean cross-paragraph SBERT cosine
+- does it answer the query?
+- is the source intrinsically credible?
+- does it agree with its peers?
+
+LEGEND (enumerate every color / style / symbol on the figure):
+- Teal pill: the Relevance trust-dimension column header
+- Coral pill: the Authority trust-dimension column header
+- Olive pill: the Consistency trust-dimension column header
+- White rectangle with grey outline: individual signal box under a column
+- Italic grey text below each column: one-sentence definition of the dimension
