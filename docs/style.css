@@ -340,6 +340,36 @@ pre {
 }
 pre code { background: transparent; padding: 0; font-size: 0.86rem; }
 
+.cite-block {
+  position: relative;
+}
+.cite-block pre {
+  padding-top: 2.6rem;
+}
+.cite-copy-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  padding: 0.3rem 0.75rem;
+  font: 600 0.8rem 'Figtree', monospace;
+  color: var(--text);
+  background: var(--bg-alt);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.cite-copy-btn:hover { background: #f0f0f3; }
+.cite-copy-btn:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+.cite-copy-btn.is-copied {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
 a {
   color: var(--link);
   text-decoration: underline;

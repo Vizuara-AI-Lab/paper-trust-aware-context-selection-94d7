@@ -170,12 +170,56 @@
     <!-- CITE -->
     <section id="cite" class="section section-narrow">
       <h2 class="section-title"><span class="section-num">07</span> Cite</h2>
-      <pre><code>@misc{mishra2026trustscore,
+      <div class="cite-block">
+        <button type="button" class="cite-copy-btn" data-target="cite-bibtex" aria-label="Copy BibTeX to clipboard">Copy</button>
+        <pre><code id="cite-bibtex">@misc{mishra2026trustscore,
   title  = {Trust-Aware Context Selection: Learned Signal Combination for Multi-Hop Evidence Retrieval},
   author = {Vikash Chandra Mishra},
   year   = {2026},
   url    = {https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7}
 }</code></pre>
+      </div>
+      <script>
+        (function () {
+          document.querySelectorAll('.cite-copy-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var id = btn.getAttribute('data-target');
+              var el = document.getElementById(id);
+              if (!el) return;
+              var text = el.innerText;
+              var done = function () {
+                var original = btn.textContent;
+                btn.textContent = 'Copied';
+                btn.classList.add('is-copied');
+                setTimeout(function () {
+                  btn.textContent = original;
+                  btn.classList.remove('is-copied');
+                }, 1500);
+              };
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(done).catch(function () {
+                  // fallback if clipboard API rejects (non-secure context etc.)
+                  var r = document.createRange();
+                  r.selectNodeContents(el);
+                  var s = window.getSelection();
+                  s.removeAllRanges();
+                  s.addRange(r);
+                  try { document.execCommand('copy'); done(); } catch (e) {}
+                  s.removeAllRanges();
+                });
+              } else {
+                var r = document.createRange();
+                r.selectNodeContents(el);
+                var s = window.getSelection();
+                s.removeAllRanges();
+                s.addRange(r);
+                try { document.execCommand('copy'); done(); } catch (e) {}
+                s.removeAllRanges();
+              }
+            });
+          });
+        })();
+      </script>
     </section>
 
   </main>
