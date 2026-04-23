@@ -1,0 +1,17 @@
+{
+  "verdict": "PASS",
+  "pdf": "sessions\\20260422-100735-94d7\\output\\main.pdf",
+  "n_pages": 11,
+  "images_dir": "sessions\\20260422-100735-94d7\\output\\visual_audit_final",
+  "checks_run": [
+    "overfull_hbox",
+    "every_page_render",
+    "orphan_pages",
+    "column_fill",
+    "float_in_bibliography",
+    "missing_legend_block"
+  ],
+  "blocking": [],
+  "non_blocking": [],
+  "all_issues": []
+}

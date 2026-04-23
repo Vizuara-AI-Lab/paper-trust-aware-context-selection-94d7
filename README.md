@@ -75,6 +75,19 @@ Vikash Chandra Mishra, Vizuara AI Labs (<vikash@vizuara.com>)
 └── docs/                   (populated by the site build)
 ```
 
+## Layout audit
+
+Full mechanical validator (`scripts/pdf_layout_check.py` in the upstream pipeline repo) was run on the final PDF with all six checks enabled:
+
+- `overfull_hbox` (compile log scan, >=5pt = blocking)
+- `every_page_render` (all 11 pages at 140 dpi)
+- `orphan_pages` (<300 chars = blocking)
+- `column_fill` (two-column balance ratio)
+- `float_in_bibliography` (figure on bibliography page = blocking)
+- `missing_legend_block` (any figure prompt without a LEGEND: block = blocking)
+
+Result: **PASS, 0 blocking, 0 warnings**. Full JSON report at [visual_audit_final/report.json](visual_audit_final/report.json); per-page PNG renders at [visual_audit_final/](visual_audit_final/).
+
 ## Provenance
 
 Session id: `20260422-100735-94d7`. See [log.md](log.md) and [state.json](state.json) for the full audit trail.
