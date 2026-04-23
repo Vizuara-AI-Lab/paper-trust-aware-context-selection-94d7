@@ -2603,8 +2603,8 @@
         }
       ]
     },
-    "repo_url": "https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7",
-    "website_url": "https://vizuara-ai-lab.github.io/paper-trust-aware-context-selection-94d7/",
+    "repo_url": "https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection",
+    "website_url": "https://vizuara-ai-lab.github.io/paper-trust-aware-context-selection/",
     "student_email_draft": {
       "to": [
         "vikash@vizuara.com"
@@ -2632,7 +2632,7 @@
     },
     "venue_format_note": "Paper currently typeset in generic 10pt twocolumn article class. Student should swap to the official NeurIPS 2026 style (neurips_2026.sty, single-column, natbib) before main-track submission. The swap is mechanical: replace \\documentclass line + preamble package set with the style file, keep all section bodies / figures / references.bib as-is.",
     "repo_owner": "Vizuara-AI-Lab",
-    "repo_name": "paper-trust-aware-context-selection-94d7",
+    "repo_name": "paper-trust-aware-context-selection",
     "repo_visibility": "public",
     "repo_status": "published",
     "website_dir": "sessions/20260422-100735-94d7/output/docs",
