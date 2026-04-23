@@ -1,0 +1,61 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We studied paragraph-level context selection as a trust-aware scoring
+problem, combining six heterogeneous signals covering relevance,
+authority, and cross-source consistency. On HotpotQA's distractor
+setting, a six-feature logistic regression trained on only one hundred
+questions per seed attained Precision@2 of $0.345 \pm 0.032$, a 3.3
+absolute-point improvement over the strongest single-signal baseline
+SBERT at $0.312 \pm 0.035$, with the sign of the gap consistent on
+every seed. Paragraph F1 and supporting-fact F1 improved in step. The
+effect we consider most informative is on calibration: the mean score
+gap between gold and distractor paragraphs grew from $0.170$ to
+$0.349$, more than doubling, so the learned combiner is not just a
+better ranker but a better-calibrated confidence source.
+
+The ablation was equally informative. A uniform average of relevance,
+log-length, and cross-paragraph consistency, which encodes the
+textbook intuition of ``trustworthy equals relevant plus authoritative
+plus corroborated,'' collapsed to Precision@2 of $0.080$, below BM25
+and far below SBERT alone. The fitted logistic-regression weights
+diagnose the cause: paragraph length and cross-paragraph consistency
+are learned with negative sign, because distractors in HotpotQA are
+length-matched to gold and topically close enough that cross-source
+similarity peaks among distractors rather than among the gold pair.
+The classical trust heuristics are correct in prior but wrong in sign
+for this retrieval regime. The broader conjecture this invites, which we flag for
+future work rather than claim here, is that in other distractor-rich
+retrieval pipelines the list of signals that carry positive weight
+should not be assumed from first principles and would benefit from
+per-benchmark calibration against ground truth. The present paper
+supplies one concrete existence proof of that failure mode on
+HotpotQA; whether the sign-flip generalizes across benchmarks is an
+open question.
+
+A few honest caveats. Our evaluation rests on two hundred held-out
+questions per seed drawn from the $7{,}405$-question HotpotQA
+distractor validation split; the margin over SBERT, while per-seed
+consistent, is only slightly larger than a single seed-std, and a
+larger-subset or larger-seed study would tighten the confidence
+interval. We measured only retrieval-side selection, not downstream
+question-answering accuracy with the selected paragraphs. Our trust
+signals are lightweight proxies (log-length as a stand-in for source
+authority, a regex-based capitalized-token overlap as a stand-in for
+question-entity salience) and do not yet consume real provenance
+metadata such as publication date, citation count, or source
+reputation; such metadata are unavailable for HotpotQA and reserved
+for a future open-web benchmark. Finally, the learned classifier
+sees only one hundred training examples per seed, so we have not
+characterized how calibration scales with additional supervision.
+
+Two directions feel immediate. First, running the same pipeline on
+genuinely heterogeneous retrieval pools (open-web RAG with real
+publication dates, documented authority proxies, and explicit
+source-conflict labels) should reveal whether the sign-flip of the
+authority and consistency heuristics is specific to HotpotQA or a
+more general property of distractor-rich retrieval. Second, lifting
+the trust score from paragraph selection into generation time, for
+example as a token-weight gate on the retrieved context, would let us
+measure whether better-calibrated selection translates into fewer
+hallucinated attributions downstream.

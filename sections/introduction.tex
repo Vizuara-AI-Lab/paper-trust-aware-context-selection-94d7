@@ -1,0 +1,90 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Large language models increasingly delegate factual recall to an
+external context: a set of retrieved documents, a cached memory
+fragment, a tool-returned snippet, or a user-supplied note. The
+correctness of a downstream answer therefore depends less on what the
+model itself knows and more on which evidence the pipeline chooses to
+place in its context window. In tasks such as medical question answering or legal reasoning, where
+evidence quality matters as much as topical match, that choice has to
+consider more than just relevance. A classical view of trust decomposes
+into orthogonal dimensions: \emph{relevance} (does the source address
+the query?), \emph{authority} (is the source intrinsically credible?),
+and \emph{consistency} (do independent sources agree?). Two further
+dimensions, \emph{provenance} (which specific source is this?) and
+\emph{recency} (has the fact since moved?), require per-source metadata
+that many standard retrieval benchmarks, including the one we study,
+do not carry; we return to those two in the future-work discussion. We
+refer to the three measurable dimensions collectively as \emph{trust
+signals}.
+
+Most retrieval-augmented systems, however, collapse trust to a single
+number: a relevance score from a dense retriever or a sparse ranker.
+This is convenient, but the single-signal view is known to fail in
+predictable ways. Irrelevant-yet-topical distractors are scored
+high~\cite{yoran2024makingrag}; the position of the correct passage
+matters almost as much as its content~\cite{liu2024lostinthemiddle};
+and conflicting passages are merged without explicit adjudication
+~\cite{xie2024adaptive}. A natural response is to compose a richer
+score from multiple signals. The intuition is simple: trustworthy
+equals relevant plus authoritative plus corroborated. Yet this
+intuition rests on an assumption that has not been tested empirically:
+that each individual trust heuristic actually points toward ground
+truth in the retrieval regimes we care about. In distractor-rich
+settings, where candidates are deliberately topically close, two
+textbook heuristics can in fact reverse sign.
+
+We test this assumption on HotpotQA's distractor
+setting~\cite{yang2018hotpotqa}. Each question is paired with ten
+candidate paragraphs (two gold, eight distractors) and sentence-level
+supporting-fact labels, so a paragraph-level scorer can be evaluated
+directly against a provenance oracle. We define six per-paragraph
+signals grouped into three trust dimensions: relevance (SBERT, BM25,
+TF-IDF), authority (log-length, question-entity overlap), and
+consistency (mean cross-paragraph SBERT cosine). We then contrast two
+combinations. The first averages three signals uniformly, following
+the textbook intuition above. The second fits a six-feature logistic
+regression on only one hundred questions per seed, reserving two
+hundred for evaluation.
+
+The learned combination lifts Precision@2 to \textbf{0.345 $\pm$ 0.032}
+versus SBERT's 0.312 $\pm$ 0.035, a 3.3 absolute-point improvement
+that holds on every seed. More tellingly, the calibration gap between
+gold and distractor scores more than doubles, from 0.170 to 0.349.
+The uniform combination, despite encoding the same textbook intuition,
+collapses to 0.080, well below every informed baseline including BM25
+at 0.187. Inspecting the fitted weights explains both outcomes at
+once: in a distractor-rich pool, paragraph length and cross-paragraph
+consistency are learned as \emph{anti}-signals, because distractors
+are both length-matched to gold and topically close enough to inflate
+cross-source similarity above that of the true gold pair. The
+classical trust heuristic is correct in prior but wrong in sign.
+
+We make three contributions:
+\begin{itemize}
+  \item We formalize paragraph-level trust-aware context selection as
+  a per-candidate scoring problem over six orthogonal signals covering
+  relevance, authority, and consistency, and release the signals as a
+  drop-in CPU-runnable feature bank.
+  \item We show that a six-feature logistic regression trained on one
+  hundred supervised questions per seed beats the strongest
+  single-signal baseline by 3.3 Precision@2 points and more than
+  doubles the gold-versus-distractor score gap, with consistent sign
+  across all three seeds.
+  \item We identify a previously-undiagnosed failure mode of naive
+  trust-signal averaging: in distractor-rich retrieval, two of the
+  three signals that textbook intuition would combine with positive
+  weight are learned with \emph{negative} weight. The ablation
+  isolates the phenomenon; the learned classifier recovers from it.
+\end{itemize}
+
+The rest of the paper is organized as follows. Section~\ref{sec:related-work}
+surveys retrieval-augmented generation, multi-hop evidence selection,
+and source attribution. Section~\ref{sec:method} formalizes the
+scoring problem and the two TrustScore variants.
+Section~\ref{sec:experiments} describes the protocol on HotpotQA
+distractor. Section~\ref{sec:results} reports the main comparison,
+the calibration diagnostic, and the learned weight pattern.
+Section~\ref{sec:conclusion} discusses scope, limitations, and a
+natural next step toward generation-time trust-aware selection.

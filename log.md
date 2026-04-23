@@ -34,3 +34,6 @@
 - 2026-04-22T11:47:30Z | stage=9 | skill=auto-review | pass | iter=2 score=8/10 rec=accept 5S/2L no medium issues; exit_recommended=true
 - 2026-04-22T11:48:29Z | stage=10.1 | skill=recommend-venues | pass | 3 conferences + 2 journals: NeurIPS, EMNLP, ACL Findings, TMLR, ACM TOIS
 - 2026-04-22T11:48:49Z | stage=10.2 | skill=venue-format | skip | target=neurips; generic twocolumn retained; swap note added to state.delivery.venue_format_note
+- 2026-04-22T11:55:46Z | stage=11.1 | skill=create-repo | pass | url=https://github.com/Vizuara-AI-Lab/paper-trust-aware-context-selection-94d7 (public)
+- 2026-04-22T11:55:46Z | stage=11.2 | skill=build-project-site | pass | published=https://vizuara-ai-lab.github.io/paper-trust-aware-context-selection-94d7/
+- 2026-04-22T11:56:52Z | stage=11.3 | skill=draft-delivery-email | pass | to=vikash@vizuara.com body=615w; NOT sent

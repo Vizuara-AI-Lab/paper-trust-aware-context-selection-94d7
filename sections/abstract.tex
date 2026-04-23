@@ -1,0 +1,33 @@
+\begin{abstract}
+Retrieval-augmented language models increasingly depend on a pool of
+heterogeneous candidate passages, and the correctness of a grounded
+answer hinges on which passages enter the context window. Most
+systems collapse this selection to a single relevance score, yet a
+classical view of trust decomposes into several orthogonal
+dimensions; on HotpotQA's distractor setting we can directly
+measure three of them: relevance to the query, an intrinsic
+authority proxy, and corroboration across independent candidate
+passages. We ask whether combining six lightweight signals covering
+these three dimensions yields better selection than any single
+signal, and whether the textbook intuition for combining them is
+empirically correct. On HotpotQA's distractor setting, with exactly two gold
+paragraphs among ten candidates per question, we compare a naive
+uniform average of three trust signals against a six-feature
+logistic regression fit on only one hundred questions per seed. The
+learned combiner attains Precision@2 of $0.345 \pm 0.032$, a 3.3
+absolute-point improvement over the strongest single-signal baseline
+SBERT at $0.312 \pm 0.035$, with the gap consistent on every seed;
+the gold-versus-distractor score gap more than doubles, from
+$0.170$ to $0.349$, indicating substantially better calibration. The
+uniform average instead collapses to $0.080$, below BM25. Inspecting
+the fitted weights diagnoses why: paragraph length and cross-
+paragraph consistency are learned as anti-signals, because
+distractors are length-matched to gold and topically close enough
+that cross-source similarity peaks among distractors rather than
+among the gold pair. In distractor-rich retrieval, the classical
+trust heuristics are correct in prior but wrong in sign, and
+supervised calibration over only one hundred questions per seed is
+sufficient to recover them. Evidence comes from a single benchmark,
+so the sign-flip should be read as a concrete existence proof rather
+than a universal property of distractor-rich retrieval.
+\end{abstract}
